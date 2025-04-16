@@ -1,0 +1,92 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApp1
+{
+    public partial class Issue_Books : Form
+    {
+        public Issue_Books()
+        {
+            InitializeComponent();
+        }
+
+        private void Issue_Books_Load(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection();
+            con.ConnectionString = "data source = DESKTOP-UHCUTMV; database = master;integrated security=True";
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = con;
+            con.Open();
+
+            cmd = new SqlCommand("select BName from NewBook", con);
+            SqlDataReader sdr = cmd.ExecuteReader();
+
+            while (sdr.Read()) 
+            {
+                for (int i = 0; i < sdr.FieldCount; i++)
+                {
+                    comboBox1.Items.Add(sdr.GetString(i));
+                }
+            }
+            sdr.Close();
+            con.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (txtenterSN.Text != "") 
+            {
+                String sn = txtenterSN.Text;
+
+                SqlConnection con = new SqlConnection();
+                con.ConnectionString = "data source = DESKTOP-UHCUTMV; database = master;integrated security=True";
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = con;
+               
+
+                cmd.CommandText = "select * from NewStudent where SNo ='" + sn + "'";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count != 0)
+                {
+                    txtSName.Text = ds.Tables[0].Rows[0][1].ToString();
+                    txtdepartment.Text = ds.Tables[0].Rows[0][2].ToString();
+                    txtSSemester.Text = ds.Tables[0].Rows[0][3].ToString();
+                    txtSContact.Text = ds.Tables[0].Rows[0][4].ToString();
+                    TxtSEmail.Text = ds.Tables[0].Rows[0][1].ToString();
+                }
+                else 
+                {
+                    txtSName.Clear();
+                    txtdepartment.Clear();
+                    txtSSemester.Clear();
+                    txtSContact.Clear();
+                    TxtSEmail.Clear();
+                    MessageBox.Show("Invalid Student No", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+
+        }
+
+        private void txtenterSN_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnissuebook_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
